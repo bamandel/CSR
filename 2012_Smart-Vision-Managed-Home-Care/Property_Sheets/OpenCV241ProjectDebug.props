@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <IncludePath>C:\OpenCV\V241\build\include;C:\OpenCV\V241\include\opencv;C:\OpenCV\V241\include\opencv2;C:\OpenCV\V241\build\common\tbb30_20110427oss\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LibraryPath>C:\OpenCV\V241\build\x86\vc10\lib;C:\OpenCV\V241\build\x86\vc10\bin;C:\OpenCV\V241\build\common\tbb30_20110427oss\lib\ia32\vc10;$(LibraryPath)</LibraryPath>
+    <_PropertySheetDisplayName>OpenCV241ProjectDebug</_PropertySheetDisplayName>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <Link>
+      <AdditionalDependencies>opencv_calib3d241d.lib;opencv_contrib241d.lib;opencv_core241d.lib;opencv_features2d241d.lib;opencv_flann241d.lib;opencv_gpu241d.lib;opencv_haartraining_engined.lib;opencv_highgui241d.lib;opencv_imgproc241d.lib;opencv_legacy241d.lib;opencv_ml241d.lib;opencv_nonfree241d.lib;opencv_objdetect241d.lib;opencv_photo241d.lib;opencv_stitching241d.lib;opencv_ts241d.lib;opencv_video241d.lib;opencv_videostab241d.lib;tbb.lib;tbb_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+</Project>

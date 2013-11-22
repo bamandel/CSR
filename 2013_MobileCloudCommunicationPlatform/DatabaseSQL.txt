@@ -1,0 +1,209 @@
+****** INSERT TABLES IN FOLLOWING ORDER BECAUSE OF DEPENDENCIES *********
+
+--- Make Database ---
+CREATE DATABASE android;
+
+
+--- Device ---
+CREATE TABLE IF NOT EXISTS `android`.`Device` (
+  `DeviceID` INT NOT NULL AUTO_INCREMENT ,
+  `Name` VARCHAR(45) NULL ,
+  `Model` VARCHAR(45) NULL ,
+  `Serial` VARCHAR(45) NULL ,
+  `Fingerprint` VARCHAR(45) NULL ,
+  `Type` VARCHAR(45) NULL ,
+  `Board` VARCHAR(45) NULL ,
+  `BootLoader` VARCHAR(45) NULL ,
+  `Brand` VARCHAR(45) NULL ,
+  `Device` VARCHAR(45) NULL ,
+  `Display` VARCHAR(45) NULL ,
+  `Hardware` VARCHAR(45) NULL ,
+  PRIMARY KEY (`DeviceID`) ,
+  UNIQUE INDEX `UserID_UNIQUE` (`DeviceID` ASC) )
+ENGINE = InnoDB;
+
+
+--- Sensor ---
+CREATE TABLE IF NOT EXISTS `android`.`Sensor` (
+  `SensorID` INT NOT NULL AUTO_INCREMENT COMMENT 'A constant describing the particular sensor. Types include: ACCELEROMETER, GYROSCOPE, etc. See http://developer.android.com/reference/android/hardware/Sensor.html ' ,
+  `DeviceID` INT NULL ,
+  `mName` VARCHAR(45) NULL COMMENT 'Name string of the sensor. SE.getName()' ,
+  `mType` INT NULL ,
+  `mVendor` VARCHAR(45) NULL COMMENT 'Vendor String of this sensor. SE.getVendor()' ,
+  `mVersion` VARCHAR(45) NULL ,
+  `mMaxRange` FLOAT NULL COMMENT 'Maximum range of the sensor in the sensor\'s unit.' ,
+  `mMinDelay` INT NULL COMMENT 'The minimum delay allowed between two events in microsecond or zero if this sensor only returns a value when the data it\'s measuring changes.' ,
+  `mPower` FLOAT NULL COMMENT 'The power in mA used by this sensor while in use.' ,
+  PRIMARY KEY (`SensorID`) ,
+  UNIQUE INDEX `SensorID_UNIQUE` (`SensorID` ASC) ,
+  CONSTRAINT `DeviceID`
+    FOREIGN KEY (`DeviceID` )
+    REFERENCES `android`.`Device` (`DeviceID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+--- PositionCode ---
+CREATE TABLE IF NOT EXISTS `android`.`PositionCode` (
+  `PositionID` VARCHAR(3) NOT NULL COMMENT 'A 1-4 letter code that describes the position of the subject (either starting or finishing). For example, Standing upright could have the code of \"STA\" while sitting could have the code of \"SIT\". Note: These also include the position of the phone/sensor o /* comment truncated */ /*n the subjects person.*/' ,
+  `Name` VARCHAR(45) NOT NULL ,
+  `Description` VARCHAR(45) NULL ,
+  PRIMARY KEY (`PositionID`) ,
+  UNIQUE INDEX `PositionID_UNIQUE` (`PositionID` ASC) )
+ENGINE = InnoDB;
+
+
+--- ADLCode ---
+CREATE TABLE IF NOT EXISTS `android`.`ADLCode` (
+  `ADLCodeID` VARCHAR(4) NOT NULL COMMENT 'A 1-4 letter code that describes the action being performed. For example, Sitting fast on a hard chair could have the code \"SFHC\".' ,
+  `Type` INT NOT NULL COMMENT 'ADL Type: Either a 1, 2, or 3 to indicate the type of ADL performed.' ,
+  `Name` VARCHAR(45) NOT NULL ,
+  `Description` VARCHAR(100) NULL ,
+  PRIMARY KEY (`ADLCodeID`) ,
+  UNIQUE INDEX `ADLCodeID_UNIQUE` (`ADLCodeID` ASC) )
+ENGINE = InnoDB;
+
+
+--- Feature ---
+CREATE  TABLE IF NOT EXISTS `android`.`Feature` (
+  `FeatureID` INT NOT NULL COMMENT 'Each Data Event can have one or more features attached to it. This can include RSS, LFT, UFT, etc.' ,
+  `Name` VARCHAR(30) NULL ,
+  `Version` FLOAT NOT NULL ,
+  `Description` VARCHAR(100) NULL ,
+  `Duration` INT NOT NULL DEFAULT 0 COMMENT 'The default value of 0 represents the entire data set over which the feature will be applied.' ,
+  `Link` BLOB NULL COMMENT 'Link to the algorithm, pdf, or other documents which further describe the algorithm. ' ,
+  PRIMARY KEY (`FeatureID`) ,
+  UNIQUE INDEX `FeatureID_UNIQUE` (`FeatureID` ASC) )
+ENGINE = InnoDB;
+
+
+--- User ---
+CREATE TABLE IF NOT EXISTS `android`.`User` (
+  `UserID` INT NOT NULL AUTO_INCREMENT ,
+  `Name` VARCHAR(45) NULL ,
+  `Age` INT NULL COMMENT 'Should have min and max values to prevent data corruption. ' ,
+  `Height` FLOAT NULL COMMENT 'Should have min and max values to prevent data corruption. ' ,
+  `Weight` FLOAT NULL COMMENT 'Should have min and max values to prevent data corruption. ' ,
+  `Sex` CHAR NULL COMMENT '(M)ale or (F)email' ,
+  `Activity_Level` CHAR NULL COMMENT 'Character code to describe the average activity level that the user describes themself as having. (H)igh, (M)edium, or (L)ow.' ,
+  `Email` VARCHAR(45) NULL ,
+  `Alarm_Number` VARCHAR(45) NULL ,
+  `DeviceID` INT NULL ,
+  `PositionID` VARCHAR(3) NULL ,
+  PRIMARY KEY (`UserID`) ,
+  UNIQUE INDEX `DeviceID_UNIQUE` (`UserID` ASC) ,
+  INDEX `PositionID` (`PositionID` ASC) ,
+  CONSTRAINT `Device_ID` FOREIGN KEY (`DeviceID`) REFERENCES `android`.`Device` (`DeviceID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `Position_ID` FOREIGN KEY (`PositionID`) REFERENCES `android`.`PositionCode` (`PositionID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+--- DataEvent ---
+CREATE TABLE IF NOT EXISTS `android`.`DataEvent` (
+  `DataEventID` INT NOT NULL AUTO_INCREMENT ,
+  `User_ID` INT NOT NULL ,
+  `PositionStart` VARCHAR(3) NULL COMMENT 'This value cooresponds to a PositionID lookup in the PositionCode Table.' ,
+  `PositionEnd` VARCHAR(3) NULL COMMENT 'This value cooresponds to a PositionID lookup in the PositionCode Table.' ,
+  `ADLActual` VARCHAR(4) NULL COMMENT 'This value cooresponds to a ADLCodeID lookup in the ADLCode Table. This is the ADL type that the DataEvent actually was.' ,
+  `ADLClassify` VARCHAR(4) NULL COMMENT 'This value cooresponds to a ADLCodeID lookup in the ADLCode Table. This is the ADL type that the AlgorithmID classified this activity as being.' ,
+  INDEX `UserID` (`User_ID` ASC) ,
+  UNIQUE INDEX `DataEventID_UNIQUE` (`DataEventID` ASC) ,
+  INDEX `PositionStart` (`PositionStart` ASC) ,
+  PRIMARY KEY (`DataEventID`) ,
+  INDEX `PositionEnd` (`PositionEnd` ASC) ,
+  INDEX `ADL_Actual` (`ADLActual` ASC) ,
+  INDEX `ADL_Classify` (`ADLClassify` ASC) ,
+  CONSTRAINT `UserID`
+    FOREIGN KEY (`User_ID` )
+    REFERENCES `android`.`User` (`UserID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `PositionStart`
+    FOREIGN KEY (`PositionStart` )
+    REFERENCES `android`.`PositionCode` (`PositionID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `PositionEnd`
+    FOREIGN KEY (`PositionEnd` )
+    REFERENCES `android`.`PositionCode` (`PositionID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `ADL_Actual`
+    FOREIGN KEY (`ADLActual` )
+    REFERENCES `android`.`ADLCode` (`ADLCodeID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `ADL_Classify`
+    FOREIGN KEY (`ADLClassify` )
+    REFERENCES `android`.`ADLCode` (`ADLCodeID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+--- DataEventResults ---
+CREATE TABLE IF NOT EXISTS `android`.`DataEventResults` (
+  `DataEventResultsID` INT NOT NULL AUTO_INCREMENT ,
+  `DataEventID` INT NOT NULL ,
+  `Type_A_Detected` BINARY NULL DEFAULT FALSE ,
+  `Type_B_Detected` BINARY NULL ,
+  `Type_AB_Detected` BINARY NULL ,
+  `Type_C_Detected` BINARY NULL ,
+  `Fall_Detected` BINARY NULL ,
+  `Inactivity_Detected` BINARY NULL ,
+  `UFT_Exceeded` BINARY NULL ,
+  `LFT_Exceeded` BINARY NULL ,
+  INDEX `DataEventID` (`DataEventID` ASC) ,
+  PRIMARY KEY (`DataEventResultsID`) ,
+  UNIQUE INDEX `DataEventResultsID_UNIQUE` (`DataEventResultsID` ASC) ,
+  UNIQUE INDEX `DataEventID_UNIQUE` (`DataEventID` ASC) ,
+  CONSTRAINT `DataEventID`
+    FOREIGN KEY (`DataEventID` )
+    REFERENCES `android`.`DataEvent` (`DataEventID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+--- DataItem ---
+CREATE TABLE IF NOT EXISTS `android`.`DataItem` (
+  `DataItemID` INT NOT NULL AUTO_INCREMENT ,
+  `Timestamp` MEDIUMTEXT NOT NULL COMMENT 'The time in nanosecond at which the event happened.' ,
+  `DataEventID` INT NOT NULL ,
+  `Gx` FLOAT NOT NULL DEFAULT 0.0 ,
+  `Gy` FLOAT NOT NULL DEFAULT 0.0 ,
+  `Gz` FLOAT NOT NULL DEFAULT 0.0 ,
+  `RSS` FLOAT NOT NULL DEFAULT 0.0 ,
+  PRIMARY KEY (`DataItemID`) ,
+  UNIQUE INDEX `DataItemID_UNIQUE` (`DataItemID` ASC) ,
+    FOREIGN KEY (`DataEventID` )
+    REFERENCES `android`.`DataEvent` (`DataEventID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+--- DataEventFeatures ---
+CREATE TABLE IF NOT EXISTS `android`.`DataEventFeatures` (
+  `DataEventFeaturesID` INT NOT NULL AUTO_INCREMENT ,
+  `DataEventID` INT NOT NULL ,
+  `FeatureID` INT NOT NULL ,
+  `Value` FLOAT NOT NULL ,
+  `Timestamp` INT NOT NULL ,
+  INDEX `DataEventID` (`DataEventID` ASC) ,
+  PRIMARY KEY (`DataEventFeaturesID`) ,
+  UNIQUE INDEX `DataEventFeaturesID_UNIQUE` (`DataEventFeaturesID` ASC) ,
+  FOREIGN KEY (`DataEventID` )
+    REFERENCES `android`.`DataEvent` (`DataEventID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  FOREIGN KEY (`FeatureID` )
+    REFERENCES `android`.`Feature` (`FeatureID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;

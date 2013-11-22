@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <IncludePath>C:\OpenCV\V241\build\include;C:\OpenCV\V241\include\opencv;C:\OpenCV\V241\include\opencv2;C:\OpenCV\V241\build\common\tbb30_20110427oss\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\OpenCV\V241\build\x86\vc10\lib;C:\OpenCV\V241\build\x86\vc10\bin;C:\OpenCV\V241\build\common\tbb30_20110427oss\lib\ia32\vc10;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <Link>
+      <AdditionalDependencies>opencv_calib3d241.lib;opencv_contrib241.lib;opencv_core241.lib;opencv_features2d241.lib;opencv_flann241.lib;opencv_gpu241.lib;opencv_haartraining_engine.lib;opencv_highgui241.lib;opencv_imgproc241.lib;opencv_legacy241.lib;opencv_ml241.lib;opencv_nonfree241.lib;opencv_objdetect241.lib;opencv_photo241.lib;opencv_stitching241.lib;opencv_ts241.lib;opencv_video241.lib;opencv_videostab241.lib;tbb.lib;tbb_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+</Project>
