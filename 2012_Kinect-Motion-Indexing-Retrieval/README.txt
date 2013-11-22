@@ -1,0 +1,1 @@
+This is the sub-repository for Kinect-based Motion Indexing and Retrieval
